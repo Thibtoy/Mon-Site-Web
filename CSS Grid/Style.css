@@ -1,0 +1,531 @@
+/* latin-ext */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v14/S6uyw4BMUTPHjxAwXjeu.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v14/S6uyw4BMUTPHjx4wXg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}
+
+body {
+	margin: 0px;
+}
+
+#back {
+	font-family: Arial;
+	width: 100px;
+	height: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(7, 9, 26, 0.8);
+	color: white;
+	border: none;
+	position: absolute;
+	top: 0px;
+	z-index: 12;
+}
+
+/* Régles pour affichage desktop*/
+
+div.container.body {
+	margin: auto;
+	width: 1224px;
+	}
+
+.body.grid {
+	margin: 53px 42px 53px 42px;
+	display: grid;
+	grid-template-columns: 77px repeat(2, 145px) 38px 676px 59px;
+	grid-template-rows: 64px 134px 31px repeat(3, 208px) 83px 504px 22px;
+	grid-template-areas: ". . . . . ."
+						 ". log . . . . "
+						 ". . . . article ."
+						 ". menu menu . article ."
+						 ". menu menu . article ."
+						 ". menu menu . article ."
+						 ". . . . . ."
+						 ". footer footer footer footer .";
+
+}
+.log {
+	background-color: #9E2084;
+	grid-area: log;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 5px solid #CCB3A6;
+	font-family: Lato;
+	font-size: 50px;
+	color: #C3CBCF;
+	font-weight: 1;
+
+
+}
+
+.menu {
+	grid-area: menu;
+	display: flex;
+	flex-direction: column;
+	background-color: #316F3F;
+	padding-left: 0px;
+	margin: 0px;
+}
+
+
+
+.menu>li {
+    flex: 0 1 400px;
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border: 10px dashed white;
+    box-sizing: content-box;
+    font-family: Lato;
+    font-size: 26px;
+    color: white;
+    padding-left: 40px;
+    
+}
+
+#a {
+	border: 10px solid #CCB3A6;
+
+}
+
+
+#b {
+	align-self: center;
+	background-color: #13CE66;
+	font-family: Lato;
+	font-size: 50px;
+	color: white;
+	position: relative;
+	left: 68px;
+	padding: 18px 17px;
+}
+
+.article {
+	background-color: #13CE66;
+	grid-area: article;
+	display: flex;
+	flex-direction: column;
+	font-family: Lato;
+	font-size: 26px;
+	color: #343F4B;
+	justify-content: space-evenly;
+	align-items: center;
+	border: 5px solid #EFF2F7;
+	box-sizing: border-box;
+}
+
+.simplimg {
+	margin-top: 25px;
+	width: 426px;
+	height: 265px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+	padding: 0px 15px;
+	box-sizing: border-box;
+	line-height: 31px;
+
+	
+}
+
+.simplimg>h3 {
+	margin: 0px;
+	font-size: 26px;
+	text-align: center;
+	color: lightgrey;
+	border: 5px solid lightgrey;
+	background-color: #20759E;
+	align-self: stretch;
+	line-height: 31px;
+
+}
+
+#simplonpass {
+	width: 232px;
+	height: 174px;
+	border-radius: 32px;
+}
+
+.simplp {
+	height: 322px;
+	overflow-y: scroll;
+	overflow-x: none;
+	text-align: center;
+	margin: 2px 66px 28px 65px ;
+	
+	
+}
+
+.simplp>p {
+	margin: 0px;
+	word-spacing: 10.5px;
+	font-size: 30px;
+	line-height: 32px;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #13CE66; 
+  
+}
+::-webkit-scrollbar-thumb {
+  background: darkgrey; 
+  
+}
+::-webkit-scrollbar-thumb:hover {
+  background: black; 
+}
+
+.profile {
+	background-color: #13CE66;
+	grid-area: footer;
+	display: flex;
+	flex-direction: row;
+	border: 5px solid #CCB3A6;
+	box-sizing: border-box;
+	align-items: flex-start;
+
+}
+
+.profilimg {
+	align-self: flex-start;
+	display: inline-block;
+}
+
+#Jorgejpg {
+	width: 385.44px;
+	height: 292px;
+	position: relative;
+	right: 38px;
+	bottom: 45px;
+	border: 10px solid #CCB3A6;
+	box-sizing: border-box;
+}
+
+
+.colonne {
+	display: flex;
+	flex-direction: column;
+	margin-right: 33.5px;
+	margin-left: 69px;
+}
+
+
+.colonne>p {
+	display: inline-block;
+	text-align: right;
+	font-size: 26px;
+	margin: 10px 16.65px 60px 0px;
+	font-family: Lato;
+	font-weight: 525;
+	color: #020305;
+	
+
+}
+
+
+#info {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	/*margin-left: 220px;*/
+	padding: 13px;
+	border-radius: 5px;
+	font-family: Lato;
+    font-size: 18px;
+    color: #47525E;
+}
+
+#arrow {
+	width: 12.5px;
+	padding-left: 40px;
+}
+
+.dropdown {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.dropdown-content {
+	position: absolute;
+	display: none;
+	background-color: grey;
+	margin-top: 50px;
+	border: 3px solid grey;
+	border-radius: 5px;
+	padding: 0px;
+}
+
+.dropdown-content li {
+	display: block;
+	padding: 5px 20px;
+	background-color: lightgrey;
+	border: 1.5px solid grey;
+	border-radius: 5px;
+	font-family: Lato;
+	color: #47525E;
+}
+
+.dropdown:hover .dropdown-content {
+	display: block
+}
+/* Régles desktop */
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*Régles Tablette*/
+
+@media screen and (max-width: 1200px)
+{
+
+div.container.body {
+	width: 1015px;
+	margin: auto;
+		}
+
+.body.grid {
+	margin: 0;
+	display: grid;
+	grid-template-columns: 1fr 145px repeat(3, 290px) 1fr;
+	grid-template-rows: 83px 134px 34px 653px 83px 504px 199px;
+	grid-template-areas: ". . . . . ."
+						 ". log menu menu menu ."
+						 ". . . . . ."
+						 ". article article article article ."
+						 ". . . . . . "
+						 ". footer footer footer footer ."
+						 ". . . . . . ";
+    }
+		
+.menu {
+	flex-direction: row;
+	margin: 0px;
+	
+}				 
+
+
+.menu>li {
+    flex: 0 1 400px;
+}
+
+.simplimg {
+	margin: 62px auto 62px auto;
+}
+
+.simplp {
+	height: 220px;
+}
+
+.simplp>p {
+	font-size: 32px;
+}
+
+.profilimg {
+	position: absolute;
+	
+}
+
+#Jorgejpg {
+	position: relative;
+	right: 80px;
+	bottom: 40px;
+	width: 280px;
+	height: 280px;
+}
+
+ .colonne {
+ 	margin-top: 50px;
+ 	margin-right: 15px;
+ 	margin-left: 200px;
+ }
+
+ .colonne>p { 
+ 	line-height: 31px;
+    font-size: 34px;
+    font-weight: 550;
+  }
+
+  .dropdown-content {
+
+  }
+
+}
+
+/* Régles Tablette */
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/* Régles Mobile */
+
+@media screen and (max-width: 750px)
+{
+#back {
+	left: 150px;
+}
+
+div.container.body {
+width: 320px;
+margin: auto;
+		}
+
+.body.grid {
+	margin: 0;
+	display: grid;
+	grid-template-columns: 7.5px 7.5px 103px 84px 103px 7.5px 7.5px;
+	grid-template-rows: 42px 84px 42px 252px 84px auto 84px auto 15px; 
+	grid-template-areas: ". . . . . . ."
+						 ". . . log . . . "
+						 ". . . . . . ."
+						 ". . menu menu menu . ."
+						 ". . . . . . ."
+						 ". article article article article article ."
+						 ". . . . . . ."
+						 ". footer footer footer footer footer . "
+						 ". . . . . . .";
+
+}		
+
+.log {
+	font-size: 26px;
+}
+
+.menu {
+	flex-direction: column;
+}				 
+#b {
+		font-size: 35px;
+		padding: 3px 6px 3px 6px;
+        line-height: 32px;
+		left: 97px;
+}
+ 
+
+.simplimg {
+	width: 200px;
+	margin-top: 25px;
+	margin-bottom: 30px;
+	justify-content: flex-start;
+}
+
+#simplonpass {
+	width: 180px;
+	height: 130px;
+	margin-top: 10px;
+}
+
+.simplimg>h3 {
+	padding: 12px 25px;
+}
+
+.simplp {
+	height: 880px;
+	margin-bottom: 220px;
+} 
+
+.simplp>p {
+	font-size: 32px;
+
+}
+
+
+.profile {
+	background-color: #13CE66;
+	grid-area: footer;
+	display: flex;
+	flex-direction: column;
+	border: 5px solid #CCB3A6;
+	box-sizing: border-box;
+	align-items: center;
+	padding-bottom: 60px;
+}
+
+.profilimg {
+	align-self: flex-start;
+	position: static;
+}
+
+#Jorgejpg {
+	width: 220px;
+	height: 300px;
+	position: relative;
+	right: 20px;
+	bottom: 30px;
+	border: 10px solid #CCB3A6;
+	box-sizing: border-box;
+}
+
+.colonne {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 5px;
+
+}
+.colonne > p {
+	text-align: right;
+	font-size: 26px;
+	margin: 15px 15px 15px 15px;
+	font-family: Lato;
+	color: #020305;
+
+}
+
+
+#info {
+	width: 145px;
+	display: flex;
+	align-self: center;
+	padding: 13px;
+	border-radius: 5px;
+	margin-top: 60px;
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+#profresp {
+	display: none;
+}
+
+#arrow {
+	width: 10%;
+	padding-left: 7.5px;
+}
+.dropdown {
+	justify-content: flex-end;
+}
+
+.dropdown-content {
+	margin-top: 100px;
+}
+}
+
+/* Régles Mobiles*/

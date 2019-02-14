@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DOMINO GAME</title>
+  <link href="domino/domino.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+  <a href="Acceuil.html"><button id="back">Retour au Site</button></a>
+  <audio id="music1">
+  <source src="domino/Dominos/a-bit-of-anime.mp3" type="audio/mp3" />
+  Votre navigateur n'est pas compatible
+</audio>
+  <audio id="music2">
+  <source src="domino/Dominos/a-bit-of-memes.mp3" type="audio/mp3" />
+  Votre navigateur n'est pas compatible
+</audio>
+  <div id="acceuil">
+    <form id="Regles"><h2>Régles du Jeu</h2>
+      <p>Pour déplacer un domino, cliquez dessus une fois puis déplacez le où vous voulez le jouer</p>
+      <p>Pendant que vous déplacez votre domino, vous pouvez le faire tourner sur lui même avec la roulette de la souris</p>
+      <p>Pour valider la position de votre domino, vous n'avez plus qu'à cliquer à l'endroit où vous voulez le jouer</p>
+      <p>Au premier tour, vous pouvez poser le domino n'importe où dans la zone de jeu authorisée, une fois que le premier domino a été posé, vous ne pouvez plus jouer qu'aux extrémités de la chaîne de dominos présente en jeu, et à la condition que la valeur du côté du domino qui vient se lier à la chaîne, corresponde à la valeur de l'extrémité de celle-ci.</p>
+      <input type="submit" value="OK">
+    </form>
+    <div id="select">
+      <h2>COMMENCER</h2>
+      <button class="buttp" id="p2">Deux Joueurs</button>
+      <button class="buttp" id="p3">Trois Joueurs</button>
+      <button class="buttp" id="p4">Quattre Joueurs</button>
+    </div>
+  </div>
+  <div class="hand" id="hand1"><h3 id="j1">Joueur1</h3><button class="pioche" id="piochej1">Pioche</button></div>
+  <div class="hand" id="hand2"><h3 id="j2">Joueur2</h3><button class="pioche" id="piochej2">Pioche</button></div>
+  <div class="hand" id="hand3"><h3 id="j3">Joueur3</h3><button class="pioche" id="piochej3">Pioche</button></div>
+  <div class="hand" id="hand4"><h3 id="j4">Joueur4</h3><button class="pioche" id="piochej4">Pioche</button></div>
+  <div id="pioche">
+      <div class="domino" id="d0"></div>
+      <div class="domino" id="d1"></div>
+      <div class="domino" id="d2"></div>
+      <div class="domino" id="d3"></div>
+      <div class="domino" id="d4"></div>
+      <div class="domino" id="d5"></div>
+      <div class="domino" id="d6"></div>
+      <div class="domino" id="d7"></div>
+      <div class="domino" id="d8"></div>
+      <div class="domino" id="d9"></div>
+      <div class="domino" id="d10"></div>
+      <div class="domino" id="d11"></div>
+      <div class="domino" id="d12"></div>
+      <div class="domino" id="d13"></div>
+      <div class="domino" id="d14"></div>
+      <div class="domino" id="d15"></div>
+      <div class="domino" id="d16"></div>
+      <div class="domino" id="d17"></div>
+      <div class="domino" id="d18"></div>
+      <div class="domino" id="d19"></div>
+      <div class="domino" id="d20"></div>
+      <div class="domino" id="d21"></div>
+      <div class="domino" id="d22"></div>
+      <div class="domino" id="d23"></div>
+      <div class="domino" id="d24"></div>
+      <div class="domino" id="d25"></div>
+      <div class="domino" id="d26"></div>
+      <div class="domino" id="d27"></div>
+      <div id="d28"></div>
+  </div>
+  <div id="board"></div>
+    <script type="text/javascript" src="domino/initialize.js"></script>
+    <script type="text/javascript" src="domino/map.js"></script>
+    <script type="text/javascript" src="domino/players.js"></script>
+    <script type="text/javascript" src="domino/domino.js"></script>
+</body>
+</html>
