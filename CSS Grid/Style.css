@@ -31,7 +31,7 @@ body {
 #back {
 	position: sticky;
 	top: 0;
-	left: 250px;
+	margin-left: 119px;
 	width: 140px;
 	height: 40px;
 	font-size: 18px;
@@ -308,6 +308,9 @@ div.container.body {
 @media screen and (max-width: 1200px)
 {
 
+#back {
+	margin: 0;
+}
 div.container.body {
 	width: 1015px;
 	margin: auto;
@@ -391,9 +394,6 @@ div.container.body {
 
 @media screen and (max-width: 750px)
 {
-#back {
-	left: 150px;
-}
 
 div.container.body {
 width: 320px;
