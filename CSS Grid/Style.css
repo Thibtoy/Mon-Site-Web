@@ -22,21 +22,25 @@ a {
 
 body {
 	margin: 0px;
+	background-image: url(fond.JPG);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
 }
 
 #back {
-	font-family: Arial;
-	width: 100px;
-	height: 20px;
+	position: sticky;
+	top: 0;
+	left: 250px;
+	width: 140px;
+	height: 40px;
+	font-size: 18px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: rgba(7, 9, 26, 0.8);
+	background-color: rgba(7, 9, 26, 0.6);
 	color: white;
 	border: none;
-	position: absolute;
-	top: 0px;
-	z-index: 12;
 }
 
 /* Régles pour affichage desktop*/
@@ -93,7 +97,7 @@ div.container.body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    border: 10px dashed white;
+    border: 10px dashed #CCB3A6;
     box-sizing: content-box;
     font-family: Lato;
     font-size: 26px;
@@ -129,7 +133,7 @@ div.container.body {
 	color: #343F4B;
 	justify-content: space-evenly;
 	align-items: center;
-	border: 5px solid #EFF2F7;
+	border: 5px solid #CCB3A6;
 	box-sizing: border-box;
 }
 
