@@ -15,6 +15,19 @@ body {
 	  
 }
 
+#back {
+	position: fixed;
+	width: 140px;
+	height: 40px;
+	font-size: 18px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(7, 9, 26, 0.6);
+	color: white;
+	border: none;
+}
+
 h2 {
 	margin: 0px;
 	margin-bottom: 20px;
