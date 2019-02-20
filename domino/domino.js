@@ -1,7 +1,9 @@
 game.dominos = {};
 game.dominos.pioche = []; 
 game.dominos.leDomino = {};
-game.dominos.lastRotate = 0
+game.dominos.board = [];
+game.dominos.save = [];
+game.dominos.out = [];
 
 class Domino {
   constructor (id, side1, side2) {
@@ -20,6 +22,8 @@ class Domino {
         console.log(this);
         this.par.appendChild(this.lien);
         this.lien.style.position = 'absolute';
+        this.lien.style.left = event.clientX-10+'px';    
+        this.lien.style.top = event.clientY-20+'px'; 
         document.addEventListener("mousemove", this.maousemauve);
         this.par.addEventListener("wheel", this.rotate);
         this.par.addEventListener("click", this.secondClick);
@@ -29,2684 +33,47 @@ class Domino {
     this.secondClick = (event) => {
       this.c +=1
       if (this.c === 2) {
-        document.removeEventListener("mousemove", this.maousemauve);
-        this.par.removeEventListener("wheel", this.rotate); 
-        this.lien.removeEventListener("click", this.clique);
         this.lien.style.left = ((Math.round(parseInt(this.lien.style.left, 10) /10))*10)+2+"px";    
         this.lien.style.top = ((Math.round(parseInt(this.lien.style.top, 10) /10))*10)+2+"px";
         var posx = (parseInt(this.lien.style.left, 10)+8)/10; 
         var posy = (parseInt(this.lien.style.top, 10)+8)/10;
         var side1 = this.side1;
         var side2 = this.side2;
+        document.removeEventListener("mousemove", this.maousemauve);
+        this.par.removeEventListener("wheel", this.rotate); 
+        this.lien.removeEventListener("click", this.clique);
         if (game.tour === 0) {
           if (this.ag === 0) {
-            for (var i = -2; i < 4; i++) {
-              if (i === 0 || i === 1) {
-                for (var k = -2; k < 0; k++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+k)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-              for (var j = 0; j < 2; j++) {
-                if (i === 0 || i === 1){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "occupée");
-                } 
-                else {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }     
-            }
-            for (var i = -2; i < 4; i++) {
-              if (i === 0 || i === 1) {
-                for (var k = 4; k < 6 ; k++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+k)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-              for (var j = 2; j < 4; j++) { 
-                if (i === 0 || i === 1) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                else {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                }
-              } 
-            }
+            game.dominos.premierPlacementVerti(posx, posy, side1, side2, this.ag);
           }
         else
-          if (this.ag === 180) {
-            for (var i = -2; i < 4; i++) {
-              if (i === 0 || i === 1) {
-                for (var k = -2; k < 0; k++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+k)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-              for (var j = 0; j < 2; j++) {
-                if (i === 0 || i === 1){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "occupée");
-                } 
-                else {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                  }
-              }     
-            }
-            for (var i = -2; i < 4; i++) {
-              if (i === 0 || i === 1) {
-                for (var k = 4; k < 6 ; k++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+k)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-              for (var j = 2; j < 4; j++) { 
-                if (i === 0 || i === 1) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                else {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-              } 
-            }
+          if(this.ag === 180) {
+            game.dominos.premierPlacementVerti(posx, posy, side2, side1, this.ag);
           }
-        else 
+        else
           if (this.ag === 90) {
-            for (var i = -1 ; i < 5; i++){
-              if (i === 1 || i === 2){
-                for (var j = -3; j <-1; j++){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                }
-                for (var j = -1; j < 1; j++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                for (var j = 1; j < 3; j++){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                for (var j = 3; j < 5; j++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-            else {
-                for (var j = -1; j < 3; j++) {
-                  if (j === -1 || j === 0){
-                    var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                    pox.setAttribute("value", side2);
-                    pox.setAttribute("dispo", "libre");
-                  }
-                  if (j === 1 || j === 2) {
-                    var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                    pox.setAttribute("value", side1);
-                    pox.setAttribute("dispo", "libre");
-                  }
-                }
-              }    
-            }
+            game.dominos.premierPlacementHori(posx, posy, side2, side1, this.ag);
           }
-        else { 
-            for (var i = -1 ; i < 5; i++){
-              if (i === 1 || i === 2){
-                for (var j = -3; j <-1; j++){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "libre");
-                }
-                for (var j = -1; j < 1; j++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side1);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                for (var j = 1; j < 3; j++){
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "occupée");
-                }
-                for (var j = 3; j < 5; j++) {
-                  var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                  pox.setAttribute("value", side2);
-                  pox.setAttribute("dispo", "libre");
-                }
-              }
-            else {
-                for (var j = -1; j < 3; j++) {
-                  if (j === -1 || j === 0){
-                    var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                    pox.setAttribute("value", side1);
-                    pox.setAttribute("dispo", "libre");
-                  }
-                  if (j === 1 || j === 2) {
-                    var pox = document.querySelector(".square[pos-x='"+(posx+j)+"'][pos-y='"+(posy+i)+"']");
-                    pox.setAttribute("value", side2);
-                    pox.setAttribute("dispo", "libre");
-                  }
-                }
-              }    
-            }    
+        else
+          if (this.ag === 270) {
+            game.dominos.premierPlacementHori(posx, posy, side1, side2, this.ag);
           }
           game.tour = 1;
-          game.dominos.lastRotate = this.ag;
-          game.players.win(); 
         }
       else {
-                            if (this.ag === 0 || this.ag === 180) {
-                            var okside1 = 0;
-                            var okside2 = 0;
-                              for (var i = 0; i < 2; i++) {
-                                for (var j = 0; j < 2; j++) {
-                                 var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                                 var comp = pox.getAttribute("value");
-                                 var disp = pox.getAttribute("dispo");
-                                  if (this.ag === 0) {
-                                    if (comp == this.side1 && disp == "libre") {
-                                      okside1 +=1;
-                                    }
-                                  }
-                                  else
-                                    if (this.ag === 180) {
-                                      if (comp == this.side2 && disp == "libre") {
-                                        okside1 +=1;
-                                      }
-                                    }
-                                    }//
-
-                                      }//
-                                      for (var i = 0; i < 2; i++) {
-                                for (var j = 2; j < 4; j++) {
-                                 var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                                 var comp = pox.getAttribute("value");
-                                 var disp = pox.getAttribute("dispo");
-                                 if (this.ag === 0) {
-                                  if (comp == this.side2 && disp == "libre") {
-                                    okside2 +=1;
-                                  }
-                                 }
-                                 else
-                                   if (this.ag === 180) {
-                                    if (comp == this.side1 && disp == "libre") {
-                                    okside2 +=1;
-                                  }
-                                   }
-                                    }//
-
-                                      }
-
-
-                                if (okside1 === 4) {
-                                   this.par.removeEventListener("click", this.secondClick);
-                                      var occ = 0;
-                                      var occg = 0;
-                                      var occd = 0;
-                                      var okElseOccd = 0;
-                                      var okElseOccg = 0;
-                                      var okElseOccdh = 0;
-                                      var okElseOccgh = 0;
-                                      var okElseOccdb = 0;
-                                      var okElseOccgb = 0;
-                                        for (var a = 0; a < 2; a++) {// occ
-                                          for (var b = -4; b < 0; b++) {
-
-                                           var pos = document.querySelector(".square[pos-x='"+(posx+a)+"'][pos-y='"+(posy+b)+"']");
-                                           var cmp = pos.getAttribute("dispo");
-                                           game.dominos.lastRotate = this.ag;
-                                             if (cmp != "libre") {
-                                              occ += 1;
-                                             }
-                                          }
-                                        }
-                                                      for (var u = -2; u < 2; u++) {//occg
-                                                          for (var t = -2; t < 0; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            var cmpoug = pou.getAttribute("dispo");
-                                                            if (cmpoug != "libre") {
-                                                                occg += 1;
-                                                            }
-                                                          }
-                                                        }
-                                                       for (var u = 0; u < 4; u++) {//occd
-                                                          for (var t = -2; t < 0; t++) {
-                                                            var poud = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            var cmpoud = poud.getAttribute("dispo");
-                                                              if (cmpoud != "libre") {
-                                                                occd += 1;
-                                                              }
-                                                              
-
-                                                          }
-                                                        }
-
-
-                                              for (var o = 2; o < 6; o++) {// okoccd
-                                                for (var p = 0; p < 2; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccd = poy.getAttribute("dispo");
-                                                  if (cmpElseOccd != "libre") {
-                                                    okElseOccd += 1;
-                                                  }
-                                              }
-                                            }
-
-
-                                            for (var o = -4; o < 0; o++) {// ok ooccg
-                                              for (var p = 0; p < 2; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccg = poy.getAttribute("dispo");
-                                                  if (cmpElseOccg != "libre") {
-                                                    okElseOccg += 1;
-                                                  }
-                                              }
-                                            }
-
-                                            for (var o = 2; o < 4; o++) {// ok oocdh
-                                              for (var p = -2; p < 2; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccdh = poy.getAttribute("dispo");
-                                                  if (cmpElseOccdh != "libre") {
-                                                    okElseOccdh += 1;
-                                                  }
-                                              }
-                                            }
-
-                                             for (var o = -2; o < 0; o++) {// ok ooccgh
-                                              for (var p = -2; p < 2; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccg = poy.getAttribute("dispo");
-                                                  if (cmpElseOccg != "libre") {
-                                                    okElseOccgh += 1;
-                                                  }
-                                              }
-                                            }
-
-                                            for (var o = 2; o < 4; o++) {// ok occdb
-                                              for (var p = 0; p < 4; p++) {
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccdb = poy.getAttribute("dispo");
-                                                  if (cmpElseOccdb != "libre") {
-                                                    okElseOccdb += 1;
-                                                  }
-                                              }
-                                            }
-
-                                            for (var o = -2; o < 0; o++) {// ok occgb
-                                              for (var p = 0; p < 4; p++) {
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccgb = poy.getAttribute("dispo");
-                                                  if (cmpElseOccgb != "libre") {
-                                                    okElseOccgb += 1;
-                                                  }
-                                              }
-                                            }
-                                                    
-                                                      if (occ === 8) {
-                                                        for (var u = -2; u < 0; u++) {
-                                                          for (var t = -2; t < 0; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            pou.removeAttribute("value");
-                                                            pou.setAttribute("value", 28);
-                                                          }
-                                                        }
-                                                        for (var u = 2; u < 4; u++) {
-                                                          for (var t = -2; t < 0; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            pou.removeAttribute("value");
-                                                            pou.setAttribute("value", 28);
-                                                          }
-                                                        }
-                                                        
-                                                      }//if occ 8
-
-                                                      else 
-                                                        if (occg === 8) {
-                                                                for (var g = 2; g < 4; g++) {
-                                                                  for (var gh = -2; gh < 0; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 0; g < 2; g++) {
-                                                                  for (var gh = -4; gh < -2; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = -2; g < 0; g++) {
-                                                                  for (var gh = 0; gh < 2; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                 
-                                                              }
-
-                                                      else  
-                                                        if (occd === 8) {
-                                                                for (var g = -2; g < 0; g++) {
-                                                                  for (var gh = -2; gh < 0; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 2 ; g < 4; g++) {
-                                                                  for (var gh = -4; gh < -2; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 2 ; g < 4; g++) {
-                                                                  for (var gh = 0; gh < 2; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                         
-                                                              }
-
-
-                                                            if (occ === 8 || occg === 8 || occd ===8) {
-                                                              for (var o = -2; o < 0; o++){
-                                                                  for (var p = 2; p < 4; p++) {
-                                                                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                                    if (this.ag === 0) {
-                                                                    poy.setAttribute("value", this.side2);
-                                                                    }
-                                                                    else
-                                                                      if (this.ag === 180) {
-                                                                    poy.setAttribute("value", this.side1);
-                                                                      }
-                                                                  }
-                                                                }
-                                                        for (var o = 2; o < 4; o++){
-                                                                  for (var p = 2; p < 4; p++) {
-                                                                     var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                                    if (this.ag === 0) {
-                                                                     poy.setAttribute("value", this.side2);
-                                                                    }
-                                                                    else
-                                                                      if (this.ag === 180) {
-                                                                     poy.setAttribute("value", this.side1);
-                                                                      }
-                                                                  }
-                                                                }
-                                                                for (var o = 0; o < 2; o++){
-                                                                  for (var p = 4; p < 6; p++) {
-                                                                     var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                                    if (this.ag === 0) {
-                                                                     poy.setAttribute("value", this.side2);
-                                                                    }
-                                                                    else
-                                                                      if (this.ag === 180) {
-                                                                     poy.setAttribute("value", this.side1);
-                                                                      }
-                                                                  }
-                                                                }
-                                                                for (var o = 0; o < 2; o++){
-                                                                  for (var p = 0; p < 4; p++) {
-                                                                    if (p === 0 || p === 1) {
-                                                                      var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                                    if (this.ag === 0) {
-                                                                    poy.setAttribute("value", this.side1);
-                                                                    poy.setAttribute("dispo", "occupée");
-                                                                    }
-                                                                    else
-                                                                      if (this.ag === 180) {
-                                                                    poy.setAttribute("value", this.side2);
-                                                                    poy.setAttribute("dispo", "occupée");
-                                                                      }
-                                                                    }
-                                                                    if (p === 2 || p === 3) {
-                                                                      var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                                      if (this.ag === 0) {
-                                                                    poy.setAttribute("value", this.side2);
-                                                                    poy.setAttribute("dispo", "occupée");
-                                                                    }
-                                                                    else
-                                                                      if (this.ag === 180) {
-                                                                    poy.setAttribute("value", this.side1);
-                                                                    poy.setAttribute("dispo", "occupée");
-                                                                      }
-                                                                    }
-                                                    
-                                                                  }
-                                                                }
-                                                                game.players.win();
-                                                              }
-
- 
-                                          else                                                               
-                                            if (okElseOccd === 8) {
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                    if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                    if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                 if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win(); 
-                                              
-                                             
-                                            }//okElseOccd
-
-                                            else
-                                             if (okElseOccg === 8) {
-                                              for (var o = -3; o < 0; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = -3; o < 0; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                               for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                    if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                    if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                             
-                                             
-                                            }//okElseOccg
-
-                                           else 
-                                            if (okElseOccdh === 8) {
-                                              for (var o = 4; o < 6; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                             if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                    if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                             
-                                             
-                                            }//okElseOccdh
- 
-
-                                            else
-                                             if (okElseOccgh === 8) {
-                                              for (var o = -4; o < -2; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                  if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                    if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                     poy.setAttribute("dispo", "occupée");
-                                                      }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                          if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                          if (this.ag === 0) {
-                                                     poy.setAttribute("value", this.side2);
-                                                    }
-                                                    else
-                                                      if (this.ag === 180) {
-                                                     poy.setAttribute("value", this.side1);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                              
-
-                                            }//okElseOccgh
-
-                                           
-                                             else {
-                                              this.retour();
-                                               /* if (game.players.tour === 1 ) {
-                                    this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand1");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                    this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 2 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand2");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 3 ) {
-                                   this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand3");
-                                      this.lien.style.position = "static";
-                                      this.lien.style.left = 0;
-                                     this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 4 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand4");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                   }*/
-                                   
-
-                                      }// okElseOccgb/okElseOccdb
-                                    } // okside1 = 4
-//////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////side 2
-                                   
-
-
-                                  
-                                     if (okside2 === 4) {
-                                   this.par.removeEventListener("click", this.secondClick);
-                                      var occ = 0;
-                                      var occg = 0;
-                                      var occd = 0;
-                                      var okElseOccd = 0;
-                                      var okElseOccg = 0;
-                                      var okElseOccdh = 0;
-                                      var okElseOccgh = 0;
-                                      var okElseOccdb = 0;
-                                      var okElseOccgb = 0;
-                                      for (var a = 0; a < 2; a++) {
-                                        for (var b = 4; b < 8; b++) {
-
-                                           var pos = document.querySelector(".square[pos-x='"+(posx+a)+"'][pos-y='"+(posy+b)+"']");
-                                           var cmp = pos.getAttribute("dispo");
-                                           game.dominos.lastRotate = this.ag;
-                                             if (cmp != "libre") {
-                                              occ += 1;
-                                             }
-                                        }
-                                      }
-                                       for (var u = -2; u < 2; u++) {
-                                                          for (var t = 4; t < 6; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            var cmpoug = pou.getAttribute("dispo");
-                                                              if (cmpoug != "libre") {
-                                                                occg += 1;
-                                                              }
-                                                              
-
-                                                          }
-                                                        }
-
-                                                        for (var u = 0; u < 4; u++) {
-                                                          for (var t = 4; t < 6; t++) {
-                                                            var poud = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            var cmpoud = pou.getAttribute("dispo");
-                                                              if (cmpoud != "libre") {
-                                                                occd += 1;
-                                                              }
-                                                              
-
-                                                          }
-                                                        }
-                                                                                                      for (var o = 2; o < 6; o++) {// okoccd
-                                              for (var p = 2; p < 4; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccd = poy.getAttribute("dispo");
-                                                  if (cmpElseOccd != "libre") {
-                                                    okElseOccd += 1;
-                                                  }
-                                              }
-                                            }
-                                            for (var o = -4; o < 0; o++) {// ok ooccg
-                                              for (var p = 2; p < 4; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccg = poy.getAttribute("dispo");
-                                                  if (cmpElseOccg != "libre") {
-                                                    okElseOccg += 1;
-                                                  }
-                                              }
-                                            }
-
-                                            for (var o = 2; o < 4; o++) {// ok oocdh
-                                              for (var p = 2; p < 6; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccdh = poy.getAttribute("dispo");
-                                                  if (cmpElseOccdh != "libre") {
-                                                    okElseOccdh += 1;
-                                                  }
-                                              }
-                                            }
-                                             for (var o = -2; o < 0; o++) {// ok ooccgh
-                                              for (var p = 2; p < 6; p++) {
-                                                
-                                                var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                var cmpElseOccg = poy.getAttribute("dispo");
-                                                  if (cmpElseOccg != "libre") {
-                                                    okElseOccgh += 1;
-                                                  }
-                                              }
-                                            }
-
-                                                      if (occ === 8) {
-
-                                                        for (var u = -2; u < 0; u++) {
-                                                          for (var t = 4; t < 6; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            pou.removeAttribute("value");
-                                                            pou.setAttribute("value", 28);
-                                                          }
-                                                        }for (var u = 2; u < 4; u++) {
-                                                          for (var t = 4; t < 6; t++) {
-                                                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                                                            pou.removeAttribute("value");
-                                                            pou.setAttribute("value", 28);
-
-                                                          }
-                                                        }
-                                                      }//if occ 8
-
-                                                  
-                                                        
-                                                       
-                                                      else
-                                                        if (occg === 8) {
-                                                                for (var g = 2; g < 4; g++) {
-                                                                  for (var gh = 4; gh < 6; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 0; g < 2; g++) {
-                                                                  for (var gh = 6; gh < 8; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = -2; g < 0; g++) {
-                                                                  for (var gh = 2; gh < 4; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                              }
-
-                                                      else  
-                                                        if (occd === 8) {
-                                                                for (var g = -2; g < 0; g++) {
-                                                                  for (var gh = 4; gh < 6; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 0 ; g < 2; g++) {
-                                                                  for (var gh = 6; gh < 8; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                                for (var g = 2 ; g < 4; g++) {
-                                                                  for (var gh = 2; gh < 4; gh++) {
-                                                                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                                                                    poug.removeAttribute("value");
-                                                                    poug.setAttribute("value", 28);
-                                                                  }
-                                                                }
-                                                              }//occd8
-                                              if (occ === 8 || occd === 8 || occg === 8) {
-                                                for (var o = -2; o < 0; o++){
-                                                  for (var p = 0; p < 2; p++) {
-                                                     var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                     if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                     
-                                                  }
-                                                }
-                                                for (var o = 2; o < 4; o++){
-                                                  for (var p = 0; p < 2; p++) {
-                                                     var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                     if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                  }
-                                                }
-                                                for (var o = 0; o < 2; o++){
-                                                  for (var p = -2; p < 0; p++) {
-                                                     var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                     if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                  }
-                                                }
-                                                for (var o = 0; o < 2; o++){
-                                                  for (var p = 0; p < 4; p++) {
-                                                    if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    
-                                                  }
-                                                }
-                                                game.players.win();
-                                          }//if occ,occd,occg = 8
-
-                                            
-
-                                          else
-                                            if (okElseOccd === 8) {
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                    if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win(); 
-                                              
-                                             
-                                            }//okElseOccd
-                                          //occd
-
-//occg
-                                            
-
-                                          else
-                                             if (okElseOccg === 8) {
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                               for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                      if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                             
-                                             
-                                            }//okElseOccg
-
-                                          //occg
-
-   
-                                            
-                                          else
-                                            if (okElseOccdh === 8) {
-                                              for (var o = 4; o < 6; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                     if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                             
-                                             
-                                            }//okElseOccdh
-
-                                            else
-                                             if (okElseOccgh === 8) {
-                                              for (var o = -4; o < -2; o++) {
-                                                for (var p = 2; p < 4; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 4; p < 6; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-                                              for (var o = -2; o < 0; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  poy.removeAttribute("value");
-                                                  poy.setAttribute("value", 28);
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = 0; p < 4; p++) {
-                                                   if (p === 0 || p === 1) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                    if (p === 2 || p === 3) {
-                                                       var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                       if (this.ag === 0) {
-                                                       poy.setAttribute("value", this.side2);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                       }
-                                                       else
-                                                        if (this.ag === 180) {
-                                                          poy.setAttribute("value", this.side1);
-                                                       poy.setAttribute("dispo", "occupée");
-                                                        }
-                                                    }
-                                                }
-                                              }
-
-                                              for (var o = 0; o < 2; o++) {
-                                                for (var p = -2; p < 0; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                   if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-
-                                              for (var o = 2; o < 4; o++) {
-                                                for (var p = 0; p < 2; p++) {
-                                                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                                                  if (this.ag === 0) {
-                                                        poy.setAttribute("value", this.side1);
-                                                     }
-                                                     else
-                                                      if (this.ag === 180) {
-                                                        poy.setAttribute("value", this.side2);
-                                                      }
-                                                }
-                                              }
-                                              game.players.win();
-                                              
-                                            }//okElseOccgh
-
-
-                                            else {
-                                              this.retour();
-                                                /*if (game.players.tour === 1 ) {
-                                    this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand1");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                    this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 2 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand2");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 3 ) {
-                                   this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand3");
-                                      this.lien.style.position = "static";
-                                      this.lien.style.left = 0;
-                                     this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 4 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand4");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                   }*/
-                                   
-
-                                      }// okElseOccgb/okElseOccdb
-                                      
-                                    } // okside2 = 4
-
-                                else
-                                  if (okside1 != 4 && okside2 !=4) {
-                                    this.retour();
-                                  /*if (game.players.tour === 1 ) {
-                                    this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand1");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                    this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 2 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand2");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 3 ) {
-                                   this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand3");
-                                      this.lien.style.position = "static";
-                                      this.lien.style.left = 0;
-                                     this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-                                  }
-
-                                  else
-                                    if (game.players.tour === 4 ) {
-                                     this.par.removeEventListener("click", this.secondClick);
-                                    var hand = document.getElementById("hand4");
-                                    this.lien.style.position = "static";
-                                    this.lien.style.left = 0;
-                                   this.lien.style.top = 0;
-                                    this.lien.addEventListener("click", this.clique);
-                                    hand.appendChild(this.lien);
-
-                                  }*/
-
-                                }
-                            }//this.ag = 0 / 180
-                            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////this.ag 90
-          if (this.ag === 90 || this.ag === 270) {
-            var okside1 = 0;
-            var okside2 = 0;
-            for (var i = -1; i < 1; i++) {
-              for (var j = 1; j < 3; j++) {
-                var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                var comp = pox.getAttribute("value");
-                var disp = pox.getAttribute("dispo");
-                if (this.ag === 90) {
-                  if (comp == this.side2 && disp == "libre") {
-                    okside1 +=1;
-                  }
-                }
-              else
-                if (this.ag === 270) {
-                  if (comp == this.side1 && disp == "libre") {
-                    okside1 +=1;
-                  }
-                }
-              }//
+            if (this.ag === 0 || this.ag === 180) {
+              console.log("1");
+              game.dominos.startOrEnd(this. par, posx, posy, side1, side2, this.lien, this.ag, this.clique, this.secondClick, game.dominos.FixPosVertiStart);
+              
             }
-            for (var i = 1; i < 3; i++) {
-              for (var j = 1; j < 3; j++) {
-                var pox = document.querySelector(".square[pos-x='"+(posx+i)+"'][pos-y='"+(posy+j)+"']");
-                  var comp = pox.getAttribute("value");
-                  var disp = pox.getAttribute("dispo");
-                  if (this.ag === 90) {
-                    if (comp == this.side1 && disp == "libre") {
-                      okside2 +=1;
-                    }
-                  }
-                else
-                  if (this.ag === 270) {
-                    if (comp == this.side2 && disp == "libre") {
-                      okside2 +=1;
-                    }
-                  }
-                }//
-              }//
-              if (okside1 === 4) {                             
-                      var occ = 0;
-                      var occg = 0;
-                      var occd = 0;
-                      var okElseOccd = 0;
-                      var okElseOccg = 0;
-                      var okElseOccdh = 0;
-                      var okElseOccgh = 0;
-                      for (var a = -5; a < -1; a++) {
-                        for (var b = 1; b < 3; b++) {
-                          var pos = document.querySelector(".square[pos-x='"+(posx+a)+"'][pos-y='"+(posy+b)+"']");
-                          var cmp = pos.getAttribute("dispo");
-                          game.dominos.lastRotate = this.ag;
-                          if (cmp != "libre") {
-                            occ += 1;
-                          }
-                        }
-                      }
-                      for (var u = -3; u < -1; u++) {
-                        for (var t = 1; t < 5; t++) {
-                          var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                          var cmpoug = pou.getAttribute("dispo");
-                          if (cmpoug != "libre") {
-                            occg += 1;
-                          }
-                        }
-                      }
-                      for (var u = -3; u < -1; u++) {
-                        for (var t = -1; t < 3; t++) {
-                          var poud = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                          var cmpoud = poud.getAttribute("dispo");
-                          if (cmpoud != "libre") {
-                            occd += 1;
-                          }
-                        }
-                      }
-                      for (var o = -1; o < 1; o++) {// okoccd
-                        for (var p = -3; p < 1; p++) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          var cmpElseOccd = poy.getAttribute("dispo");
-                          if (cmpElseOccd != "libre") {
-                            okElseOccd += 1;
-                          }
-                        }
-                      }
-                      for (var o = -1; o < 1; o++) {// ok ooccg
-                        for (var p = 3; p < 7; p++) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          var cmpElseOccg = poy.getAttribute("dispo");
-                          if (cmpElseOccg != "libre") {
-                            okElseOccg += 1;
-                          }
-                        }
-                      }
-                      for (var o = -3; o < 1; o++) {// ok oocdh
-                        for (var p = -1; p < 1; p++) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          var cmpElseOccdh = poy.getAttribute("dispo");
-                          if (cmpElseOccdh != "libre") {
-                            okElseOccdh += 1;
-                          }
-                        }
-                      }
-                      for (var o = -3; o < 1; o++) {// ok ooccgh
-                        for (var p = 3; p < 5; p++) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          var cmpElseOccg = poy.getAttribute("dispo");
-                          if (cmpElseOccg != "libre") {
-                            okElseOccgh += 1;
-                          }
-                        }
-                      }
-                      if (occ === 8) {
-                        for (var u = -3; u < -1; u++) {
-                          for (var t = 3; t < 5; t++) {
-                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                            pou.removeAttribute("value");
-                            pou.setAttribute("value", 28);
-                          }
-                        }       
-                        for (var u = -3; u < -1; u++) {
-                          for (var t = -1; t < 1; t++) {
-                            var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                            pou.removeAttribute("value");
-                            pou.setAttribute("value", 28);
-                          }
-                        }
-                      }//if occ 8
-                    else
-                      if (occg === 8) {
-                        for (var g = -3; g < -1; g++) {
-                          for (var gh = -1; gh < 1; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                        for (var g = -5; g < -3; g++) {
-                          for (var gh = 1; gh < 3; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                        for (var g = -1; g < 1; g++) {
-                          for (var gh = 3; gh < 5; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                      }
-                    else 
-                      if (occd === 8) {
-                        for (var g = -3; g < -1; g++) {
-                          for (var gh = 3; gh < 5; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                        for (var g = -5 ; g < -3; g++) {
-                          for (var gh = 1; gh < 3; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                        for (var g = -1 ; g < 1; g++) {
-                          for (var gh = -1; gh < 1; gh++) {
-                            var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                            poug.removeAttribute("value");
-                            poug.setAttribute("value", 28);
-                          }
-                        }
-                      }//occd8
-                      if (occ === 8 || occd === 8 || occg === 8) {
-                        for (var o = 1; o < 3; o++){
-                          for (var p = 3; p < 5; p++) {
-                            var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                            if (this.ag === 90) {
-                              poy.setAttribute("value", this.side1);
-                            }
-                          else
-                            if (this.ag === 270) {
-                              poy.setAttribute("value", this.side2);
-                            }
-                          }
-                        }
-                        for (var o = 1; o < 3; o++){
-                          for (var p = -1; p < 1; p++) {
-                            var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                            if (this.ag === 90) {
-                              poy.setAttribute("value", this.side1);
-                            }
-                          else
-                            if (this.ag === 270) {
-                              poy.setAttribute("value", this.side2);
-                            }
-                          }
-                        }
-                        for (var o = 3; o < 5; o++){
-                          for (var p = 1; p < 3; p++) {
-                            var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                            if (this.ag === 90) {
-                              poy.setAttribute("value", this.side1);
-                            }
-                          else
-                            if (this.ag === 270) {
-                              poy.setAttribute("value", this.side2);
-                            }
-                          }
-                        }
-                      for (var o = -1; o < 3; o++){
-                        for (var p = 1; p < 3; p++) {
-                          if (o === -1 || o === 0) {
-                            var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                            if (this.ag === 90) {
-                              poy.setAttribute("value", this.side2);
-                              poy.setAttribute("dispo", "occupée");
-                            }
-                          else
-                            if (this.ag === 270) {
-                              poy.setAttribute("value", this.side1);
-                              poy.setAttribute("dispo", "occupée");
-                            }
-                          }
-                          if (o === 1 || o === 2) {
-                            var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                            if (this.ag === 90) {
-                              poy.setAttribute("value", this.side1);
-                              poy.setAttribute("dispo", "occupée");
-                            }
-                          else
-                            if (this.ag === 270) {
-                              poy.setAttribute("value", this.side2);
-                              poy.setAttribute("dispo", "occupée");
-                            }
-                          }
-                        }
-                      }
-                      game.players.win();
-                    }
-                else
-                  if (okElseOccd === 8) {
-                    for (var o = -3; o < -1; o++) {
-                      for (var p = -1; p < 0; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = -1; p < 1; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -1; o < 3; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        if (o === -1 || o === 0) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                        if (o === 1 || o === 2) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                         else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                      }
-                    }
-                    for (var o = 3; o < 5; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = 3; p < 5; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    game.players.win(); 
-                  }//okElseOccd
-                else
-                   if (okElseOccg === 8) {
-                    for (var o = -3; o < -1; o++) {
-                      for (var p = 3; p < 5; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = 3; p < 5; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -1; o < 3; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        if (o === -1 || o === 0) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                        if (o === 1 || o === 2) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                      }
-                    }
-                    for (var o = 3; o < 5; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = -1; p < 1; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    game.players.win();
-                  }//okElseOccg
-                else
-                  if (okElseOccdh === 8) {
-                    for (var o = -1; o < 1; o++) {
-                      for (var p = -3; p < -1; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -3; o < -1; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = -1; p < 1; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.removeAttribute("value");
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -1; o < 3; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        if (o === -1 || o === 0) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                        if (o === 1 || o === 2) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                      }
-                    }
-                    for (var o = 3; o < 5; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = 3; p < 5; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    game.players.win();
-                  }//okElseOccdh
-                else
-                  if (okElseOccgh === 8) {
-                    for (var o = -3; o < 1; o++) {
-                      for (var p = 5; p < 7; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -3; o < -1; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = 3; p < 5; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        poy.setAttribute("value", 28);
-                      }
-                    }
-                    for (var o = -1; o < 3; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        if (o === -1 || o === 0) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                        if (o === 1 || o === 2) {
-                          var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                          if (this.ag === 90) {
-                            poy.setAttribute("value", this.side1);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        else
-                          if (this.ag === 270) {
-                            poy.setAttribute("value", this.side2);
-                            poy.setAttribute("dispo", "occupée");
-                          }
-                        }
-                      }
-                    }
-                    for (var o = 3; o < 5; o++) {
-                      for (var p = 1; p < 3; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    for (var o = 1; o < 3; o++) {
-                      for (var p = -1; p < 1; p++) {
-                        var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                        if (this.ag === 90) {
-                          poy.setAttribute("value", this.side1);
-                        }
-                      else
-                        if (this.ag === 270) {
-                          poy.setAttribute("value", this.side2);
-                        }
-                      }
-                    }
-                    game.players.win();
-              }//okElseOccgh
-            else {
-              this.retour();
-                /*if (game.players.tour === 1 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand1");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 2 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand2");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 3 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand3");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 4 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand4");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }*/
-              }// okElseOccgb/okElseOccdb
-            } // okside1 = 4
-//////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////side 2 ag 90/180
-//////////////////////////////////////////////////////////////////////////////////
-            if (okside2 === 4) {
-              this.par.removeEventListener("click", this.secondClick);
-              var occ = 0;
-              var occg = 0;
-              var occd = 0;
-              var okElseOccd = 0;
-              var okElseOccg = 0;
-              var okElseOccdh = 0;
-              var okElseOccgh = 0;
-              for (var a = 3; a < 7; a++) {
-                for (var b = 1; b < 3; b++) {
-                  var pos = document.querySelector(".square[pos-x='"+(posx+a)+"'][pos-y='"+(posy+b)+"']");
-                  var cmp = pos.getAttribute("dispo");
-                  game.dominos.lastRotate = this.ag;
-                  if (cmp != "libre") {
-                    occ += 1;
-                  }
-                }
-              }
-              for (var u = 3; u < 5; u++) {
-                for (var t = 1; t < 5; t++) {
-                  var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                  var cmpoug = pou.getAttribute("dispo");
-                  if (cmpoug != "libre") {
-                    occd += 1;
-                  }
-                }
-              }
-              for (var u = 3; u < 5; u++) {
-                for (var t = -1; t < 3; t++) {
-                  var poud = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                  var cmpoud = poud.getAttribute("dispo");
-                  if (cmpoud != "libre") {
-                    occg += 1;
-                  }
-                }
-              }
-              for (var o = 1; o < 3; o++) {// okoccd
-                for (var p = 3; p < 7; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  var cmpElseOccd = poy.getAttribute("dispo");
-                  if (cmpElseOccd != "libre") {
-                    okElseOccd += 1;
-                  }
-                }
-              }
-              for (var o = 1; o < 3; o++) {// ok ooccg
-                for (var p = -3; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  var cmpElseOccg = poy.getAttribute("dispo");
-                  if (cmpElseOccg != "libre") {
-                    okElseOccg += 1;
-                  }
-                }
-              }
-              for (var o = 1; o < 5; o++) {// ok oocdh
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  var cmpElseOccdh = poy.getAttribute("dispo");
-                  if (cmpElseOccdh != "libre") {
-                    okElseOccdh += 1;
-                  }
-                }
-              }
-              for (var o = 1; o < 5; o++) {// ok ooccgh
-                for (var p = -1; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  var cmpElseOccg = poy.getAttribute("dispo");
-                  if (cmpElseOccg != "libre") {
-                    okElseOccgh += 1;
-                  }
-                }
-              }
-              if (occ === 8) {
-                for (var u = 3; u < 5; u++) {
-                  for (var t = -1; t < 1; t++) {
-                    var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                    pou.removeAttribute("value");
-                    pou.setAttribute("value", 28);
-                  }
-                }
-                for (var u = 3; u < 5; u++) {
-                  for (var t = 3; t < 5; t++) {
-                    var pou = document.querySelector(".square[pos-x='"+(posx+u)+"'][pos-y='"+(posy+t)+"']");
-                    pou.removeAttribute("value");
-                    pou.setAttribute("value", 28);
-                  }
-                }
-              }//if occ 8
-            else
-              if (occg === 8) {
-                for (var g = 1; g < 3; g++) {
-                  for (var gh = -1; gh < 1; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-                for (var g = 3; g < 5; g++) {
-                  for (var gh = 3; gh < 5; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-                for (var g = 5; g < 7; g++) {
-                  for (var gh = 1; gh < 3; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-              }//occg8
-            else  
-              if (occd === 8) {
-                for (var g = 1; g < 3; g++) {
-                  for (var gh = 3; gh < 5; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-                for (var g = 3 ; g < 5; g++) {
-                  for (var gh = -1; gh < 1; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-                for (var g = 5 ; g < 7; g++) {
-                  for (var gh = 1; gh < 3; gh++) {
-                    var poug = document.querySelector(".square[pos-x='"+(posx+g)+"'][pos-y='"+(posy+gh)+"']");
-                    poug.removeAttribute("value");
-                    poug.setAttribute("value", 28);
-                  }
-                }
-              }//occd8
-              if (occ === 8 || occd === 8 || occg === 8) {
-                for (var o = -1; o < 1; o++){
-                  for (var p = -1; p < 1; p++) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                    }
-                  }
-                }
-                for (var o = -1; o < 1; o++){
-                  for (var p = 3; p < 5; p++) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                    }
-                  }
-                }
-                for (var o = -3; o < -1; o++){
-                  for (var p = 1; p < 3; p++) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                    }
-                  }
-                }
-                for (var o = -1; o < 3; o++){
-                  for (var p = 1; p < 3; p++) {
-                    if (o === -1 || o === 0) {
-                      var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                      if (this.ag === 90) {
-                        poy.setAttribute("value", this.side2);
-                        poy.setAttribute("dispo", "occupée");
-                      }
-                    else
-                      if (this.ag === 270) {
-                        poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                  if (o === 1 || o === 2) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                }
-              }
-              game.players.win();
-            }// occ, occd , occg = 8
-          else  
-            if (okElseOccd === 8) {
-              for (var o = -1; o < 1; o++) {
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = 3; o < 5; o++) {
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 3; o++) {
-                for (var p = 1; p < 3; p++) {
-                  if (o === -1 || o === 0) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                  if (o === 1 || o === 2) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                }
-              }
-              for (var o = -1; o < 0; o++) {
-                for (var p = -1; p < 0; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              for (var o = -3; o < -1; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              game.players.win(); 
-            }//okElseOccd
           else
-            if (okElseOccg === 8) {
-              for (var o = -1; o < 1; o++) {
-                for (var p = -1; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = 3; o < 5; o++) {
-                for (var p = -1; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 3; o++) {
-                for (var p = 1; p < 3; p++) {
-                  if (o === -1 || o === 0) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                  if (o === 1 || o === 2) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                       poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                }
-              }
-              for (var o = -3; o < -1; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              for (var o = -1; o < 1; o++) {
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                 else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              game.players.win();
-            }//okElseOccg
-          else
-            if (okElseOccdh === 8) {
-              for (var o = 3; o < 5; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = 1; o < 3; o++) {
-                for (var p = 5; p < 7; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 1; o++) {
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 3; o++) {
-                for (var p = 1; p < 3; p++) {
-                  if (o === -1 || o === 0) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                   if (o === 1 || o === 2) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                   }
-                 }
-               }
-              for (var o = -1; o < 1; o++) {
-                for (var p = -1; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              for (var o = -3; o < -1; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              game.players.win();
-            }//okElseOccdh 
-          else               
-            if (okElseOccgh === 8) {
-              for (var o = 3; o < 5; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = 1; o < 3; o++) {
-                for (var p = -3; p < -1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 1; o++) {
-                for (var p = -1; p < 1; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  poy.removeAttribute("value");
-                  poy.setAttribute("value", 28);
-                }
-              }
-              for (var o = -1; o < 3; o++) {
-                for (var p = 1; p < 3; p++) {
-                  if (o === -1 || o === 0) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                  if (o === 1 || o === 2) {
-                    var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                    if (this.ag === 90) {
-                      poy.setAttribute("value", this.side1);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  else
-                    if (this.ag === 270) {
-                      poy.setAttribute("value", this.side2);
-                      poy.setAttribute("dispo", "occupée");
-                    }
-                  }
-                }
-              }
-              for (var o = -3; o < -1; o++) {
-                for (var p = 1; p < 3; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              for (var o = -1; o < 1; o++) {
-                for (var p = 3; p < 5; p++) {
-                  var poy = document.querySelector(".square[pos-x='"+(posx+o)+"'][pos-y='"+(posy+p)+"']")
-                  if (this.ag === 90) {
-                    poy.setAttribute("value", this.side2);
-                  }
-                else
-                  if (this.ag === 270) {
-                    poy.setAttribute("value", this.side1);
-                  }
-                }
-              }
-              game.players.win();
-            }//okElseOccgh                                        
-            else {
-              this.retour();
-                /*if (game.players.tour === 1 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand1");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 2 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand2");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 3 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand3");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }
-              else
-                if (game.players.tour === 4 ) {
-                  this.par.removeEventListener("click", this.secondClick);
-                  var hand = document.getElementById("hand4");
-                  this.lien.style.position = "static";
-                  this.lien.style.left = 0;
-                  this.lien.style.top = 0;
-                  this.lien.addEventListener("click", this.clique);
-                  hand.appendChild(this.lien);
-                }*/
-              }// okElseOccgb/okElseOccdb
-            } // okside2 = 4
-          else
-            if (okside1 != 4 && okside2 !=4) {
-              this.retour();
-              /*if (game.players.tour === 1 ) {
-                this.par.removeEventListener("click", this.secondClick);
-                var hand = document.getElementById("hand1");
-                this.lien.style.position = "static";
-                this.lien.style.left = 0;
-                this.lien.style.top = 0;
-                this.lien.addEventListener("click", this.clique);
-                hand.appendChild(this.lien);
-              }
-            else
-              if (game.players.tour === 2 ) {
-                this.par.removeEventListener("click", this.secondClick);
-                var hand = document.getElementById("hand2");
-                this.lien.style.position = "static";
-                this.lien.style.left = 0;
-                this.lien.style.top = 0;
-                this.lien.addEventListener("click", this.clique);
-                hand.appendChild(this.lien);
-              }
-            else
-              if (game.players.tour === 3 ) {
-                this.par.removeEventListener("click", this.secondClick);
-                var hand = document.getElementById("hand3");
-                this.lien.style.position = "static";
-                this.lien.style.left = 0;
-                this.lien.style.top = 0;
-                this.lien.addEventListener("click", this.clique);
-                hand.appendChild(this.lien);
-              }
-            else
-              if (game.players.tour === 4 ) {
-                this.par.removeEventListener("click", this.secondClick);
-                var hand = document.getElementById("hand4");
-                this.lien.style.position = "static";
-                this.lien.style.left = 0;
-                this.lien.style.top = 0;
-                this.lien.addEventListener("click", this.clique);
-                hand.appendChild(this.lien);
-              }*/
-            }//okside1 && okside 2 != 4
-          }//this.ag = 90/270
+            if (this.ag === 90 || this.ag === 270) {
+              console.log("2");
+              game.dominos.startOrEnd(this.par, posx, posy, side2, side1, this.lien, this.ag, this.clique, this.secondClick, game.dominos.FixPosHoriStart);
+            }
         }// Else if game tour != 0
       }
-    }
-          
+    }          
 
     this.maousemauve = (event) => {           
       if (this.c === 1) {
@@ -2726,24 +93,12 @@ class Domino {
       }
     }
 
-    this.retour = () => {
-      var main = "hand"+game.players.tour;
-        this.par.removeEventListener("click", this.secondClick);
-        var hand = document.getElementById(main);
-        this.lien.style.position = "static";
-        this.lien.style.left = 0;
-        this.lien.style.top = 0;
-        this.lien.style.transform = 'rotate('+0+'deg)';
-        this.ag = 0;
-        this.lien.addEventListener("click", this.clique);
-        hand.appendChild(this.lien);
-    }
+    
 
     this.lien.onclick = this.clique;
     game.dominos.pioche.push(this.lien);            
   }
 }
-
 
 game.dominos.generateDominos = function() {
   var d0 =   new Domino("d0", 0, 0);
@@ -2777,7 +132,6 @@ game.dominos.generateDominos = function() {
   var d28 =   new Domino("d28", -1, -1);
 }
 
-
 game.dominos.shuffle = function(array) {
   let len = array.length - 1;
   let dominos = array.slice(0);
@@ -2788,7 +142,6 @@ game.dominos.shuffle = function(array) {
   }
 }
 
-
 game.dominos.setPioche = function(array) {
   let len = array.length-1 ;
   for (var i = 0; i <= len; i++) {
@@ -2798,7 +151,6 @@ game.dominos.setPioche = function(array) {
     par.replaceChild(son, old);
   }
 }
-
 
 game.dominos.hands = function() {
   var nb = game.players.board.length;
@@ -2812,43 +164,406 @@ game.dominos.hands = function() {
     }
   else {
     for (var i = 0; i < 6; i++) {
-        for (var j = 1; j <= nb; j++) {
-          let dom = document.getElementById('pioche').childNodes[1];
-          document.getElementById('hand'+j).appendChild(dom);
+      for (var j = 1; j <= nb; j++) {
+        let dom = document.getElementById('pioche').childNodes[1];
+        document.getElementById('hand'+j).appendChild(dom);
+      }
+    }
+  }
+}
+
+game.dominos.pox = function (x, y, i, j, s, dispo, ag) {
+  var pox = document.querySelector(".square[pos-x='"+(x+i)+"'][pos-y='"+(y+j)+"']");
+    pox.setAttribute("value", s);
+    pox.setAttribute("dispo", dispo);
+    pox.setAttribute("ag", ag);
+    return pox;
+}
+
+game.dominos.premierPlacementVerti = function(x, y, s1, s2, ag) {
+  for (var i = -2; i < 4; i++) {
+    for(var j = -2; j < 6; j++) {  
+      if ((y-1) < (y+j) && (y+j) < (y+4) && (x-1) < (x+i) && (x+i) < (x+2)) {
+        if ((j) === 0 || (j) === 1) {
+          var pox = game.dominos.pox(x, y, i, j, s1,"occupée", ag);
+        }
+      else {
+          var pox = game.dominos.pox(x, y, i, j, s2,"occupée", ag);
+        }
+      game.dominos.board.push(pox);
+      }
+    }
+  }
+  game.players.win();
+}
+
+game.dominos.premierPlacementHori = function(x, y, s1, s2, ag) {
+  for (var i = -3; i < 5; i++) {
+    for (var j = -1; j < 5; j++) {
+      if (y < (y+j) && (y+j) < (y+3)) {
+        if (i === -1 || i === 0) {
+          var pox = game.dominos.pox(x, y, i, j, s1,"occupée", ag);
+          game.dominos.board.push(pox);
+        }
+      else
+        if (i === 1 || i === 2) {
+          var pox = game.dominos.pox(x, y, i, j, s2,"occupée", ag);
+          game.dominos.board.push(pox);      
         }
       }
     }
-  /*if (game.players.board.length === 2) {
-    for (var i = 0; i < 7; i++) {
-      let dom1 = document.getElementById('pioche').childNodes[1];
-      let dom2 = document.getElementById('pioche').childNodes[2];
-      document.getElementById('hand1').appendChild(dom1);
-      document.getElementById('hand2').appendChild(dom2);
-    }
   }
-  else 
-    if (game.players.board.length ===3) {
-      for (var i = 0; i < 6; i++) {
-        let dom1 = document.getElementById('pioche').childNodes[1];
-        let dom2 = document.getElementById('pioche').childNodes[2];
-        let dom3 = document.getElementById('pioche').childNodes[3];
-        document.getElementById('hand1').appendChild(dom1);
-        document.getElementById('hand2').appendChild(dom2);
-        document.getElementById('hand3').appendChild(dom3);
-      }
-    }
-  else {
-    for (var i = 0; i < 6; i++) {
-      let dom1 = document.getElementById('pioche').childNodes[1];
-      let dom2 = document.getElementById('pioche').childNodes[2];
-      let dom3 = document.getElementById('pioche').childNodes[3];
-      let dom4 = document.getElementById('pioche').childNodes[4];
-      document.getElementById('hand1').appendChild(dom1);
-      document.getElementById('hand2').appendChild(dom2);
-      document.getElementById('hand3').appendChild(dom3);
-      document.getElementById('hand4').appendChild(dom4);
-    }
-  }*/
+  game.players.win();
 }
 
+game.dominos.retour = function(par, lien, ag, fnct1, fnct2) {
+      var main = "hand"+game.players.tour;
+        par.removeEventListener("click", fnct2);
+        var hand = document.getElementById(main);
+        lien.style.position = "static";
+        lien.style.left = 0;
+        lien.style.top = 0;
+        lien.style.transform = 'rotate('+0+'deg)';
+        ag = 0;
+        lien.addEventListener("click", fnct1);
+        hand.appendChild(lien);
+    }
 
+
+game.dominos.tcheck = function(x, y, a, b, s1, s2, lien, ag, resultat, cas, par, fnct1, fnct2) {
+  var chain = (resultat == "start" || resultat == "startdown")? parseInt(game.dominos.board[0].getAttribute("value")) : parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("value"));
+  lien.style.top = (y*10)+a+"px";
+  lien.style.left = (x*10)+b+"px";     
+  var posx = (parseInt(lien.style.left, 10)+8)/10; 
+  var posy = (parseInt(lien.style.top, 10)+8)/10;
+  if (s1 === chain || s2 === chain) {
+   if (cas == "cas1") {
+       if (ag === 0 || ag === 180) {
+        if (s1 === chain) {
+         lien.style.transform = 'rotate('+180+'deg)';
+         game.dominos.autrePlacementVerti(posx, posy, s2, s1, lien, resultat, 180);
+        }
+      else
+        if (s2 === chain) {
+          lien.style.transform = 'rotate('+0+'deg)';
+         game.dominos.autrePlacementVerti(posx, posy, s1, s2, lien, resultat, 0);
+        }
+       }
+       if (ag === 90 || ag === 270) {
+        if (s1 === chain) {
+         lien.style.transform = 'rotate('+270+'deg)';
+         game.dominos.autrePlacementHori(posx, posy, s2, s1, lien, resultat, 270);
+       }
+       else
+        if (s2 === chain) {
+          lien.style.transform = 'rotate('+90+'deg)';
+         game.dominos.autrePlacementHori(posx, posy, s1, s2, lien, resultat, 90);
+        }
+       }
+   }
+   else
+    if (cas == "cas2") {
+       if (ag === 0 || ag === 180) {
+        if (s1 === chain) {
+         lien.style.transform = 'rotate('+0+'deg)';
+         game.dominos.autrePlacementVerti(posx, posy, s1, s2, lien, resultat, 0);
+        }
+      else
+        if (s2 === chain) {
+          lien.style.transform = 'rotate('+180+'deg)';
+         game.dominos.autrePlacementVerti(posx, posy, s2, s1, lien, resultat, 180);
+        }
+       }
+       if (ag === 90 || ag === 270) {
+        if (s1 === chain) {
+         lien.style.transform = 'rotate('+90+'deg)';
+         game.dominos.autrePlacementHori(posx, posy, s1, s2, lien, resultat, 90);
+       }
+       else
+        if (s2 === chain) {
+          lien.style.transform = 'rotate('+270+'deg)';
+         game.dominos.autrePlacementHori(posx, posy, s2, s1, lien, resultat, 270);
+        }
+       }
+   }
+ }
+ else {game.dominos.retour(par, lien, ag, fnct1, fnct2)}
+}
+
+var alors = function(x, r, t) {
+              if (r == "start") {
+                game.dominos.board.unshift(x);
+              }
+            else
+              if (r == "end") {
+                game.dominos.board.push(x);
+              }
+            else
+              if (r == "startdown" || r == "enddown") {
+                t.unshift(x);
+              }
+            }
+
+game.dominos.autrePlacementVerti = function(x, y, s1, s2, lien, resultat, ag) {
+  var tableauTemporaire = [];
+      for (var i = 1; i > -1; i--) {
+        for (var j = 3; j > -1; j--) {
+          if (j === 0 || j === 1) {
+            var pox = game.dominos.pox(x, y, i, j, s1,"occupée", ag);
+            alors(pox, resultat, tableauTemporaire);
+          }
+          else
+            if (j === 2 || j === 3) {
+              var pox = game.dominos.pox(x, y, i, j, s2,"occupée", ag);
+              alors(pox, resultat, tableauTemporaire);
+          }
+        }
+      }
+  if (tableauTemporaire.length != 0) {
+    if (resultat == "enddown") {
+    for (var i = 0; i < tableauTemporaire.length; i++) {
+      game.dominos.board.push(tableauTemporaire[i]);
+    }
+  }
+  else
+    if (resultat == "startdown") {
+      for (var i = 0; i < tableauTemporaire.length; i++) {
+        game.dominos.board.unshift(tableauTemporaire[i]);
+      }
+    }
+  }
+  if (game.dominos.out.length != 0) {
+  game.dominos.Endchoix();
+  game.dominos.out.length = 0;
+  game.dominos.save.length = 0;
+}
+  game.players.win();
+}
+
+game.dominos.FixPosVertiStart = function(Ychain, Xchain, Ycomp, Xcomp, angle, x, y, s1, s2, lien, ag, par, fnct1, fnct2, z) {
+  var cas = (z == true)? "start" : "end";
+  if (angle === 0 || angle === 180) {
+    if (Ychain < Ycomp) {
+      game.dominos.tcheck(Xchain, Ychain, -48, -8, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+    }
+  else 
+    if (Ychain > Ycomp) {
+      game.dominos.tcheck(Xchain, Ychain, 2, -18, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+  }
+  }
+else
+  if (angle === 90 || angle === 270) {
+    if (Xchain < Xcomp) {
+    if (y <= Ychain && x >= Xchain) {
+      game.dominos.tcheck(Xchain, Ychain, -48, -8, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+  }
+else
+  if (y < (Ychain+1) && x < Xchain) {
+      game.dominos.tcheck(Xchain, Ychain, -28, -28, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+  }
+else
+  if (y > Ychain && x < Xchain) {
+      game.dominos.tcheck(Xchain, Ychain, -8, -28, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+
+  }
+else
+  if (y > (Ychain+1) && x > (Xchain-1)) {
+      game.dominos.tcheck(Xchain, Ychain, 12, -8, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+  }
+  }
+else
+  if (Xchain > Xcomp) {
+    if (y < Ychain && x > (Xchain-1)) {
+      game.dominos.tcheck(Xchain, Ychain, -38, 2, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+  }
+else
+  if (y < Ychain && x < Xchain) {
+      game.dominos.tcheck(Xchain, Ychain, -58, -18, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+
+  }
+else
+  if (y > (Ychain-1) && x < Xchain) {
+      game.dominos.tcheck(Xchain, Ychain, 2, -18, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+
+  }
+else
+  if (y > (Ychain-1) && x > (Xchain-1)) {
+      game.dominos.tcheck(Xchain, Ychain, -18, +2, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+  }
+  }
+  }
+  
+}
+
+game.dominos.autrePlacementHori = function(x, y, s1, s2, lien, resultat, ag) {
+  var tableauTemporaire = [];
+      for (var i = 2; i > -2; i--) {
+        for (var j = 2; j > 0; j--) {
+          if (i === -1 || i === 0) {
+            var pox = game.dominos.pox(x, y, i, j, s1,"occupée", ag);
+            alors(pox, resultat, tableauTemporaire);
+          }
+          else
+            if (i === 1 || i === 2) {
+              var pox = game.dominos.pox(x, y, i, j, s2,"occupée", ag);
+              alors(pox, resultat, tableauTemporaire);
+          }
+        }
+      }
+  if (tableauTemporaire.length != 0) {
+    var index = 0;
+    var len = game.dominos.board.length;
+    if (resultat == "enddown") {
+    for (var i = 0; i < tableauTemporaire.length; i++) {
+      game.dominos.board.push(tableauTemporaire[i]);
+    }
+  }
+  else
+    if (resultat == "startdown") {
+      for (var i = 0; i < tableauTemporaire.length; i++) {
+        game.dominos.board.unshift(tableauTemporaire[i]);
+      }
+    }
+  }
+    if (game.dominos.out.length != 0) {
+  game.dominos.Endchoix();
+  game.dominos.out.length = 0;
+  game.dominos.save.length = 0;
+}
+  game.players.win();
+}
+
+game.dominos.FixPosHoriStart = function(Ychain, Xchain, Ycomp, Xcomp, angle, x, y, s1, s2, lien, ag, par, fnct1, fnct2, z) {
+  var cas = (z == true)? "start" : "end";
+  if (angle === 0 || angle === 180) {
+    if (Ychain < Ycomp) {
+      if (x < (Xchain+1) && y > (Ychain-1)) {
+       game.dominos.tcheck(Xchain, Ychain, -18, -38, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2); 
+    }
+  else
+    if (x < (Xchain+1) && y < (Ychain)) {
+       game.dominos.tcheck(Xchain, Ychain, -38, -18, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2); 
+    }
+  else
+    if (x > Xchain && y > (Ychain-1)) {
+       game.dominos.tcheck(Xchain, Ychain, -18, 22, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+    }
+  else
+    if (x > (Xchain) && y < (Ychain)) {
+       game.dominos.tcheck(Xchain, Ychain, -38, 2, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2); 
+    }
+    }
+    if (Ychain > Ycomp) {
+      if (x < Xchain && y > (Ychain-1)) {
+      game.dominos.tcheck(Xchain, Ychain, -8, -28, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+    }
+  else
+    if (x < Xchain && y < (Ychain)) {
+      game.dominos.tcheck(Xchain, Ychain, -28, -48, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+    }
+  else
+    if (x > (Xchain-1) && y > (Ychain-1)) {
+      game.dominos.tcheck(Xchain, Ychain, -8, -8, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+    }
+  else
+    if (x > (Xchain-1) && y < (Ychain)) {
+      game.dominos.tcheck(Xchain, Ychain, -28, 12, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+    }
+    }
+  }
+else
+  if (angle === 90 || angle === 270) {
+    if(Xchain < Xcomp) {
+      game.dominos.tcheck(Xchain, Ychain, -18, -38, s1, s2, lien, ag, cas, "cas1", par, fnct1, fnct2) ;
+    }
+    if(Xchain > Xcomp) {
+      game.dominos.tcheck(Xchain, Ychain, -28, 12, s1, s2, lien, ag, cas+"down", "cas2", par, fnct1, fnct2) ;
+    }
+  }
+}
+
+game.dominos.startOrEnd = function( par, x, y, s1, s2, lien, ag, fnct1, fnct2, fnct3) {
+  console.log(ag);
+  var valstart = parseInt(game.dominos.board[0].getAttribute("value"));
+  var valend = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("value"));
+  if ((s1 === valstart || s2 === valstart) && (s1 === valend || s2 === valend)) {
+    game.dominos.choix(valstart, valend, fnct3);
+    game.dominos.save.push(par, x, y , s1, s2, lien, ag, fnct1, fnct2, fnct3)
+  }
+else  
+  if (s1 === valstart || s2 === valstart) {
+    var Ychain = parseInt(game.dominos.board[0].getAttribute("pos-y")); 
+    var Xchain = parseInt(game.dominos.board[0].getAttribute("pos-x"));
+    var Ycomp  = parseInt(game.dominos.board[7].getAttribute("pos-y"));
+    var Xcomp  = parseInt(game.dominos.board[7].getAttribute("pos-x"));
+    var angle  = parseInt(game.dominos.board[0].getAttribute("ag"));
+    console.log(angle);
+    fnct3(Ychain, Xchain, Ycomp, Xcomp, angle, x, y, s1, s2, lien, ag, par, fnct1, fnct2, true);
+  }
+else
+  if (s1 === valend || s2 === valend) {
+    var Ychain = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("pos-y")); 
+    var Xchain = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("pos-x"));
+    var Ycomp  = parseInt(game.dominos.board[game.dominos.board.length-8].getAttribute("pos-y"));
+    var Xcomp  = parseInt(game.dominos.board[game.dominos.board.length-8].getAttribute("pos-x"));
+    var angle  = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("ag"));
+    console.log(angle);
+    fnct3(Ychain, Xchain, Ycomp, Xcomp, angle, x, y, s1, s2, lien, ag, par, fnct1, fnct2, false)
+  }
+else {game.dominos.retour(par, lien, ag, fnct1, fnct2)}
+}
+
+game.dominos.choix = function (x, y, fnct3) {
+  console.log(fnct3);
+  var par = document.querySelector("body");
+  var form = document.createElement('form');
+  var p = document.createElement('p');
+  var inpt1 = document.createElement('input');
+  var inpt2 = document.createElement('input');
+  form.setAttribute("class", "form");
+  p.innerHTML = "vous pouvez jouer"+" "+x+" "+"ou"+" "+y+", lequel voulez vous jouer?"
+  inpt1.setAttribute("type", "submit");
+  inpt1.setAttribute("value", x);
+  inpt1.setAttribute("id", "inpt1");// trouver une autre solution que le form;//regarder le form dans initialize.js
+  inpt2.setAttribute("type", "submit");
+  inpt2.setAttribute("value", y);
+  inpt2.setAttribute("id", "inpt2");
+  par.appendChild(form);
+  form.appendChild(p);
+  form.appendChild(inpt1);
+  form.appendChild(inpt2);
+  form.style.display = "flex";
+  console.log(fnct3);
+  form.addEventListener("click", game.dominos.Alors.bind(fnct3));
+  console.log(fnct3);
+  game.dominos.out.push(par, form, p, inpt1, inpt2);
+}
+
+game.dominos.Endchoix = function () {
+  game.dominos.out[0].removeChild(game.dominos.out[1]);
+}
+
+game.dominos.Alors = function(event) {
+  event.preventDefault();
+  var inpt = event.target.getAttribute("Id");
+  if (inpt == "inpt1") {
+    var Ychain = parseInt(game.dominos.board[0].getAttribute("pos-y")); 
+    var Xchain = parseInt(game.dominos.board[0].getAttribute("pos-x"));
+    var Ycomp  = parseInt(game.dominos.board[7].getAttribute("pos-y"));
+    var Xcomp  = parseInt(game.dominos.board[7].getAttribute("pos-x"));
+    var angle  = parseInt(game.dominos.board[0].getAttribute("ag"));
+    this(Ychain, Xchain, Ycomp, Xcomp, angle, game.dominos.save[1], game.dominos.save[2], game.dominos.save[3], game.dominos.save[4], game.dominos.save[5], game.dominos.save[6], game.dominos.save[0], game.dominos.save[7], game.dominos.save[8], true);
+  }
+  else {
+    var Ychain = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("pos-y")); 
+    var Xchain = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("pos-x"));
+    var Ycomp  = parseInt(game.dominos.board[game.dominos.board.length-8].getAttribute("pos-y"));
+    var Xcomp  = parseInt(game.dominos.board[game.dominos.board.length-8].getAttribute("pos-x"));
+    var angle  = parseInt(game.dominos.board[game.dominos.board.length-1].getAttribute("ag"));
+    this(Ychain, Xchain, Ycomp, Xcomp, angle, game.dominos.save[1], game.dominos.save[2], game.dominos.save[3], game.dominos.save[4], game.dominos.save[5], game.dominos.save[6], game.dominos.save[0], game.dominos.save[7], game.dominos.save[8], false);
+  }
+
+
+  
+
+};

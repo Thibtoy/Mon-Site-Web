@@ -10,7 +10,7 @@ class Playerbtn {
         document.getElementById('Regles').addEventListener("submit", function () {
         event.preventDefault()
         game.new(x);
-        game.music.play();
+        //game.music.play();
         document.getElementById('acceuil').style.display = "none";
         document.getElementById('hand1').style.display = "flex";
         document.getElementById('board').style.display = "block";
@@ -18,36 +18,10 @@ class Playerbtn {
         });
       }
 
-      this.clique = (e) => {
-        this.start(this.nb);
-    /*else
-      if (this.id === 'p3') {
-        document.getElementById('select').style.display = "none";
-        document.getElementById('Regles').style.display = "flex";
-        document.getElementById('Regles').addEventListener("submit", function () {
-        event.preventDefault()
-        game.new(3);
-        game.music.play();
-        document.getElementById('acceuil').style.display = "none";
-        document.getElementById('hand1').style.display = "flex";
-        document.getElementById('board').style.display = "block";
-        document.getElementById('pioche').style.display = "none";
-        });
-      }
-    else {
-        document.getElementById('select').style.display = "none";
-        document.getElementById('Regles').style.display = "flex";
-        document.getElementById('Regles').addEventListener("submit", function () {
-        event.preventDefault()
-        game.new(4);
-        game.music.play();
-        document.getElementById('acceuil').style.display = "none";
-        document.getElementById('hand1').style.display = "flex";
-        document.getElementById('board').style.display = "block";
-        document.getElementById('pioche').style.display = "none";
-        });
-      }*/
+    this.clique = (e) => {
+      this.start(this.nb);
     }
+
     this.lien.onclick = this.clique;
   }
 }
@@ -71,36 +45,5 @@ game.new = function(x) {
   game.dominos.shuffle(game.dominos.pioche);
   game.dominos.setPioche(game.dominos.pioche);
   game.dominos.hands();
-  /*if (x === 2) {
-	game.map.generateMap();
-	new Players(1, 1, "j1", "piochej1");
-	new Players(2, 2, "j2", "piochej2");
-	game.dominos.generateDominos();
-	game.dominos.shuffle(game.dominos.pioche);
-	game.dominos.setPioche(game.dominos.pioche);
-	game.dominos.hands();
-  }
-else
-  if (x === 3) {
-	game.map.generateMap();
-	new Players(1, 1, "j1", "piochej1");
-	new Players(2, 2, "j2", "piochej2");
-	new Players(3, 3, "j3", "piochej3");
-	game.dominos.generateDominos();
-	game.dominos.shuffle(game.dominos.pioche);
-	game.dominos.setPioche(game.dominos.pioche);
-	game.dominos.hands();
-  }
-else {
-	game.map.generateMap();
-	new Players(1, 1, "j1", "piochej1");
-	new Players(2, 2, "j2", "piochej2");
-	new Players(3, 3, "j3", "piochej3");
-	new Players(4, 4, "j4", "piochej4");
-	game.dominos.generateDominos();
-	game.dominos.shuffle(game.dominos.pioche);
-	game.dominos.setPioche(game.dominos.pioche);
-	game.dominos.hands();
-  }*/
 }
 
